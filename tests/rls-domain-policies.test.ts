@@ -62,6 +62,14 @@ function caseArms(fnName: string): Record<string, string> {
 }
 
 describe('SEC-002 domain RLS migration', () => {
+  it('keeps custody credentials, mappings, and observations behind service-role routes', () => {
+    for (const table of ['custody_connections', 'custody_positions', 'custody_balance_observations']) {
+      expect(TABLE_RULES[table]).toMatchObject({ scope: 'service' })
+      expect(allSql).toContain(`revoke all on public.${table} from anon, authenticated;`)
+      expect(allSql).toContain(`grant select, insert, update, delete on public.${table} to service_role;`)
+    }
+  })
+
   it('reads the migration at all (guards against a silently passing test)', () => {
     expect(sql.length).toBeGreaterThan(5000)
     expect(sql).toContain('create or replace function public.domain_access(')

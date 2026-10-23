@@ -298,6 +298,9 @@ export const TABLE_RULES: Record<string, TableRule> = {
   // ---- Never through the Data API ------------------------------------------------------------
   fund_api_keys: { scope: 'service', note: 'API key material.' },
   affinity_credentials: { scope: 'service', note: 'Per-user Affinity API key.' },
+  custody_connections: { scope: 'service', note: 'Encrypted read-only exchange credentials and sync state.' },
+  custody_positions: { scope: 'service', note: 'Admin-managed mapping from exchange assets to book positions.' },
+  custody_balance_observations: { scope: 'service', note: 'Provider-reported quantities used as reconciliation evidence.' },
   oauth_clients: { scope: 'service', note: 'Client secrets and the redirect-URI allowlist.' },
   oauth_tokens: { scope: 'service', note: 'Access/refresh token hashes.' },
   oauth_authorization_codes: { scope: 'service', note: 'Single-use authorization codes and PKCE challenges.' },
