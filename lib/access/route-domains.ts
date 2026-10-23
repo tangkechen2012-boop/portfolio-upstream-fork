@@ -518,6 +518,9 @@ export const ROUTE_DOMAINS: Record<string, RouteAccess> = {
   // Affinity issues ONE KEY PER USER, scoped to that user's own permissions, so each member
   // connects their own. It lives under /settings but it is not administration.
   'api/settings/affinity': { domain: 'portfolio', level: 'any' },
+  // Exchange credentials and automatic book marks are fund-admin settings. The handler checks
+  // the admin role again; accounting is the domain whose ledger the scheduled runner changes.
+  'api/settings/kraken': { domain: 'accounting' },
   // A member's OWN agent credentials: GET lists only their keys, POST mints one for them. The
   // route refuses the read-only demo itself, and every call the key later makes is re-checked
   // against its owner's live grants — so the key can never exceed them. Gating this as admin
@@ -597,6 +600,7 @@ export const UNGATED_ROUTES: Record<string, string> = {
 
   // Service-triggered: shared CRON_SECRET, fail-closed if unset.
   'api/cron/affinity-sync': 'Cron: CRON_SECRET.',
+  'api/cron/kraken-sync': 'Cron: CRON_SECRET.',
   'api/cron/deal-research': 'Cron: CRON_SECRET.',
   'api/cron/deals-digest': 'Cron: CRON_SECRET.',
   'api/cron/memo-agent-worker': 'Cron: CRON_SECRET.',
