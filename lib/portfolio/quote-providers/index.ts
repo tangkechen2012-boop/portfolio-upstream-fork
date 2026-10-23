@@ -1,14 +1,14 @@
 import type { PriceFeed } from '../quotes'
 import type { QuoteProvider, QuoteResult, ProviderContext } from './types'
+import { krakenProvider } from './kraken'
 
 export type { QuoteProvider, QuoteResult, ProviderContext } from './types'
 
 // ---------------------------------------------------------------------------
 // Where quotes come from.
 //
-// NO LIVE VENDOR IS WIRED UP, deliberately. Prices are entered by hand today, which is a
-// perfectly good answer for a handful of positions and costs nothing to run or audit. What
-// exists here is the SEAM: the shape an adapter has to satisfy, and the one place it registers.
+// Live vendors register here. They return observations only; valuation and booking remain in the
+// portfolio domain below this seam.
 //
 // ADDING A VENDOR is a new file and a line in PROVIDERS below. Nothing else changes — not the
 // schema, not the close, not the valuation. `price_feeds.provider` already stores which adapter
@@ -44,7 +44,7 @@ const manualProvider: QuoteProvider = {
 
 const PROVIDERS: Record<string, QuoteProvider> = {
   manual: manualProvider,
-  // Register a vendor adapter here. See the note above for the contract.
+  kraken: krakenProvider,
 }
 
 export const PROVIDER_NAMES = Object.keys(PROVIDERS)
