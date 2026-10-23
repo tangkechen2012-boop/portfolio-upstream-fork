@@ -36,4 +36,3 @@ describe('Kraken quote provider', () => {
     expect(providerFor('kraken').name).toBe('kraken')
   })
 })
-

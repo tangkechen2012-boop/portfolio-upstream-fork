@@ -109,4 +109,3 @@ export async function markCustodyConnectionOk(
     .update({ last_error: null, last_synced_at: now, updated_at: now } as any)
     .eq('id', connectionId)
 }
-

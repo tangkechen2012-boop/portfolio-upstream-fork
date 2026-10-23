@@ -30,7 +30,7 @@ export async function GET() {
 
   const [{ data: connections, error: connectionError }, { data: positions, error: positionError }] = await Promise.all([
     db.from('custody_connections')
-      .select('id, provider, label, active, api_key_encrypted, api_secret_encrypted, last_synced_at, last_error, created_at, updated_at')
+      .select('id, provider, label, active, last_synced_at, last_error, created_at, updated_at')
       .eq('fund_id', fundId),
     db.from('custody_positions')
       .select('id, connection_id, company_id, vehicle_id, price_feed_id, asset_code, auto_book, tolerance, active')
@@ -47,7 +47,9 @@ export async function GET() {
       provider: connection.provider,
       label: connection.label,
       active: connection.active,
-      connected: !!connection.api_key_encrypted && !!connection.api_secret_encrypted,
+      // Creation is atomic at the route boundary: a row whose encrypted credentials fail to save
+      // is deleted. Do not read secret columns merely to derive this status bit.
+      connected: true,
       last_synced_at: connection.last_synced_at,
       last_error: connection.last_error,
       created_at: connection.created_at,
@@ -154,4 +156,3 @@ export async function DELETE(req: NextRequest) {
   if (error) return NextResponse.json({ error: 'Could not delete Kraken connection.' }, { status: 500 })
   return NextResponse.json({ connected: false })
 }
-

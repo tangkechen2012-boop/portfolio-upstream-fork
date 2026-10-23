@@ -40,4 +40,3 @@ describe('Kraken custody cron', () => {
     expect(h.run).toHaveBeenCalledTimes(2)
   })
 })
-

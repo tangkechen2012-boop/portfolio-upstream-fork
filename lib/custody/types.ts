@@ -46,4 +46,3 @@ export interface CustodyCredentials {
   apiKey: string
   apiSecret: string
 }
-

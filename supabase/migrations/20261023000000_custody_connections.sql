@@ -72,4 +72,3 @@ revoke all on public.custody_balance_observations from anon, authenticated;
 grant select, insert, update, delete on public.custody_connections to service_role;
 grant select, insert, update, delete on public.custody_positions to service_role;
 grant select, insert, update, delete on public.custody_balance_observations to service_role;
-

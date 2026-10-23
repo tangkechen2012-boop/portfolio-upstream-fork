@@ -80,6 +80,16 @@ describe('runKrakenCustodySync', () => {
     expect(db.tables.custody_balance_observations).toEqual([])
     expect(deps.bookMark).not.toHaveBeenCalled()
     expect(result.positions[0]).toMatchObject({ booked: false, error: expect.stringMatching(/BTC.*not returned/) })
+    expect(result.error).toBe('1 custody position failed.')
+    expect(db.tables.custody_connections[0].last_error).toBe('1 custody position failed.')
+  })
+
+  it('contains a booking failure to its position and marks the run failed', async () => {
+    deps.bookMark = vi.fn(async () => { throw new Error('ledger unavailable') })
+    const db = seed()
+    const result = await runKrakenCustodySync(db.admin, 'cx-1', deps)
+    expect(result.positions[0]).toMatchObject({ booked: false, error: 'The automatic mark could not be booked.' })
+    expect(result.error).toBe('1 custody position failed.')
   })
 
   it('surfaces a missing price or duplicate mark as a safe non-booking result', async () => {
@@ -102,4 +112,3 @@ describe('runKrakenCustodySync', () => {
     expect(JSON.stringify(result)).not.toContain('secret')
   })
 })
-

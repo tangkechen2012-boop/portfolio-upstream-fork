@@ -114,4 +114,3 @@ export class KrakenClient {
     return payload
   }
 }
-

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { NextRequest } from 'next/server'
+import { readFileSync } from 'node:fs'
 
 const h = vi.hoisted(() => ({
   getUser: vi.fn(),
@@ -119,6 +120,13 @@ describe('/api/settings/kraken', () => {
     expect(body.connections[0]!).not.toHaveProperty('api_key_encrypted')
   })
 
+  it('does not even select encrypted credentials for the status response', () => {
+    const source = readFileSync(new URL('./route.ts', import.meta.url), 'utf8')
+    const statusSelect = source.match(/custody_connections'\)\s*\.select\('([^']+)'\)/)?.[1] ?? ''
+    expect(statusSelect).not.toContain('api_key_encrypted')
+    expect(statusSelect).not.toContain('api_secret_encrypted')
+  })
+
   it('validates credentials before storing an admin-created connection and mapping', async () => {
     const res = (await POST(request('POST', {
       action: 'connect', api_key: 'key', api_secret: 'secret', label: 'Treasury',
@@ -150,4 +158,3 @@ describe('/api/settings/kraken', () => {
     expect(connections).toHaveLength(0)
   })
 })
-

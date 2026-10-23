@@ -224,19 +224,31 @@ export async function runKrakenCustodySync(
       continue
     }
 
-    const booking = await dependencies.bookMark(
-      admin,
-      result.fundId,
-      connection.created_by as string,
-      position.company_id,
-      vehicleName,
-      asOfDate,
-    )
-    item.booked = booking.booked
-    if (!booking.booked) item.reason = booking.reason
+    try {
+      const booking = await dependencies.bookMark(
+        admin,
+        result.fundId,
+        connection.created_by as string,
+        position.company_id,
+        vehicleName,
+        asOfDate,
+      )
+      item.booked = booking.booked
+      if (!booking.booked) item.reason = booking.reason
+    } catch {
+      item.error = 'The automatic mark could not be booked.'
+    }
   }
 
-  await markCustodyConnectionOk(admin, connectionId)
+  if (quoteRefreshFailed) {
+    result.error = 'Quote refresh failed.'
+  } else {
+    const failedPositions = result.positions.filter(position => !!position.error).length
+    if (failedPositions > 0) {
+      result.error = `${failedPositions} custody position${failedPositions === 1 ? '' : 's'} failed.`
+    }
+  }
+  if (result.error) await recordConnectionError(admin, connectionId, result.error)
+  else await markCustodyConnectionOk(admin, connectionId)
   return result
 }
-
